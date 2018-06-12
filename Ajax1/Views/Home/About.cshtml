@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Product";
+}
+
+<span>Search Products:</span><input type="text" id="productname" class="form-control"
+                           oninput="search()" />
+<!-- input type="button" id="search" value="Search by City"
+        class="btn btn-default" onclick="search()" /-->
+<table class="table table-striped" id="product">
+    <!-- this is the inner HTML for #customers -->
+</table>
+<script type="text/javascript"
+        src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    function search() {
+        $.ajax(
+            {
+                type: 'POST',
+                url: '/Home/GetProductByName',
+                data: '{productname: "' + document.getElementById("productname").value
+                    + '"}',
+                contentType: 'application/json; charset-utf-8',
+                dataType: 'json',
+                success:
+                    function (response) {
+                        var tableHTML = "<tr><th>Product ID</th>"
+                            + "<th>Product Name</th>"
+                            + "<th>Price</th>"
+                            + "<th>In Stock</th></tr>";
+                        for (var i = 0; i < response.length; i++) {
+                            var Product = response[i];
+                            var tr = "<tr><td>" + Product.ProductID + "</td>"
+                                + "<td>" + Product.ProductName + "</td>"
+                                + "<td>" + Product.UnitPrice + "</td>"
+                                + "<td>" + Product.UnitsInStock + "</td>"
+                                + "</tr>";
+                            tableHTML += tr;
+                        }
+                        document.getElementById("product")
+                            .innerHTML = tableHTML;
+                    },
+                failure: function (response) {
+                    alert("Failure" + response.responseText);
+                },
+                error: function (response) {
+                    alert("Error" + response.responseText);
+                }
+            }
+
+        );
+    }
+</script>
